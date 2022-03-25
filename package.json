@@ -1,4 +1,8 @@
 {
+  "engines" : { 
+    "npm" : ">=6.13.4",
+    "node" : ">=12.14.1"
+  }
   "name": "src",
   "private": true,
   "dependencies": {
