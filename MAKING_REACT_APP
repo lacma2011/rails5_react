@@ -1,0 +1,135 @@
+Steps to making react app. Do these steps after doing steps in HOW_I_DID_THIS which create the rails app for local dev docker host and heroku
+
+
+
+Have docker container running:
+
+	docker run \
+	-p 3000:3000 \
+	-v $(pwd):/usr/src/app/ \
+	my_project
+	
+
+For steps using "rails" tool, run in the container.
+
+
+login to container:
+	docker exec -it $(docker ps -q) /bin/bash
+
+
+Create react scripts
+--------------------
+
+(in container) run rails tool for new webpacker react app:
+	rails webpacker:install:react
+
+
+(outside container) set perms:
+	sudo chmod 775 app/javascript/packs/hello_react.jsx 
+	sudo chown jj app/javascript/packs/hello_react.jsx
+
+
+(in container) run rails create controller pages:
+	rails g controller pages index
+
+
+(outside container) set perms, with correct user:
+	sudo chown jj app/views/pages
+	sudo chown jj app/assets/javascripts/pages.coffee
+	sudo chown jj app/assets/stylesheets/pages.scss
+	sudo chown jj app/controllers/pages_controller.rb
+	sudo chown jj app/helpers/pages_helper.rb
+	sudo chown jj app/views/pages/index.html.erb
+	sudo chown jj config/routes.rb
+	sudo chown jj test/controllers/pages_controller_test.rb
+
+	sudo chmod 775 app/views/pages
+	sudo chmod 775 app/assets/javascripts/pages.coffee
+	sudo chmod 775 app/assets/stylesheets/pages.scss
+	sudo chmod 775 app/controllers/pages_controller.rb
+	sudo chmod 775 app/helpers/pages_helper.rb
+	sudo chmod 775 app/views/pages/index.html.erb
+	sudo chmod 775 config/routes.rb
+	sudo chmod 775 test/controllers/pages_controller_test.rb
+	
+
+add to config/routes.rb:
+	root 'pages#index'
+	
+Clear the content of app/views/pages/index.html.erb then add the snippet below just before the closing head tag in app/views/layouts/application.html.erb:
+
+	<%= javascript_pack_tag 'hello_react' %>
+
+
+(outside container):
+	mkdir app/javascript/components
+	touch app/javascript/components/Counter.jsx
+
+
+
+modify Counter.jsx:
+-------------------
+
+(begin text)
+
+import React, { useState} from 'react'
+const Counter = () => {
+  const [count, setCount] = useState(0);
+  const increase = () => setCount(count+1);
+  const decrease = () => setCount(count-1);
+  return (
+    <div>
+      <button onClick={decrease}>-</button>
+      <span>{count}</span>
+      <button onClick={increase}>+</button>
+    </div>
+  )
+}
+export default Counter;
+
+(end text)
+
+
+
+
+modify hello_world.jsx:
+-----------------------
+(begin text)
+
+import React from 'react'
+import ReactDOM from 'react-dom'
+
+import Counter from '../components/Counter';
+
+document.addEventListener('DOMContentLoaded', () => {
+  ReactDOM.render(
+    <Counter/>,
+    document.body.appendChild(document.createElement('div')),
+  )
+})
+
+(end text)
+
+
+
+
+Fix babel:
+----------
+Create .babelrc:
+	{ "presets": ["@babel/preset-env", "@babel/preset-react"] }
+
+
+From inside container, add this yarn:	
+	yarn add @babel/preset-react
+	
+
+Done!
+-----
+Homepage now shows a counter!
+
+
+
+This guide was from following some of tutorial:
+	https://blog.logrocket.com/how-to-use-react-ruby-on-rails/
+	
+
