@@ -220,6 +220,16 @@ git remote add origin git@github.com:lacma2011/rails-react.git
 
 
 
+For heroku, have to specify the node version in packages.json:
+	  "engines" : { 
+	    "npm" : "6.13.4",
+    	    "node" : "12.14.1"
+  	  },
+  	  
+Will have to get a version from a docker perhaps?
+
+
+
 Push to heroku
 --------------
 
@@ -230,8 +240,12 @@ Assuming heroku command line app is already installed and I have an account alre
 	heroku buildpacks:add --index 1 heroku/nodejs
 	heroku buildpacks:add --index 2 heroku/ruby
 	heroku config:set NPM_CONFIG_PRODUCTION=false YARN_PRODUCTION=false
+
+Then specify the right stack for ruby 2.7:
+	heroku stack:set heroku-18
+
 	git push heroku main
-	heroku run rake yarn:install
+
 	
 to see apps:
 	heroku apps:info
@@ -239,11 +253,5 @@ to see apps:
 Open homepage, which should be a custom 404 rails message since no route is set up for that yet.
 
 
-For heroku, may need to specify the node version in packages.json:
-	  "engines" : { 
-	    "npm" : ">=6.13.4",
-    		"node" : ">=12.14.1"
-  	},
-Will have to get a version from docker perhaps?
 
 
