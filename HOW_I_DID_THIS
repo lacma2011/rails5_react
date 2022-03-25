@@ -239,3 +239,11 @@ to see apps:
 Open homepage, which should be a custom 404 rails message since no route is set up for that yet.
 
 
+For heroku, may need to specify the node version in packages.json:
+	  "engines" : { 
+	    "npm" : ">=6.13.4",
+    		"node" : ">=12.14.1"
+  	},
+Will have to get a version from docker perhaps?
+
+
